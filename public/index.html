@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Messages</title>
+
+    <link rel="shortcut icon" href="image/logo.png" type="image/x-icon">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="image/logo.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: "Roboto", sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url('/images/web/bg2.png');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .window {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            height: 100vh;
+            padding: 10px;
+
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .chats {
+            flex: 1;
+            overflow-y: scroll;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+            padding-top: 30px;
+        }
+
+        .chats p {
+            background-color: white;
+            padding: 6px 10px;
+            border-radius: 5px;
+            color: black;
+            font-size: medium;
+        }
+
+        .bottom {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin: auto;
+            max-width: 500px;
+        }
+
+        .msg {
+            flex: 1;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            border: 0px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        }
+
+        .img-covers {
+            width: 30px;
+        }
+
+        .sendbtn {
+            background-color: inherit;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="window">
+        <h1>Messages</h1>
+        <div class="chats">
+
+        </div>
+        <div class="bottom">
+            <input type="text" class="msg" id="msgInp">
+            <button class="sendbtn" id="send">
+                <img src="/images/web/sendbtn.png" alt="" class="img-covers">
+            </button>
+        </div>
+    </div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const input = document.getElementById('msgInp');
+    const btn = document.getElementById('send');
+    const chatsBox = document.querySelector('.chats');
+
+    const socket = io();
+    socket.on('chat-msg', (msg) => {
+        const p = document.createElement('p');
+        p.innerHTML = msg;
+        chatsBox.appendChild(p);
+        chatsBox.scrollTo(0, chatsBox.scrollHeight);
+    })
+
+    btn.addEventListener('click', () => {
+        if (input.value) {
+            socket.emit('chat-msg', input.value);
+            input.value = "";
+        }
+    })
+    input.addEventListener('keydown', function (event) {
+        if (event.key == "Enter") {
+            event.preventDefault();
+            btn.click();
+        }
+    })
+
+</script>
+
+</html>
